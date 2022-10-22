@@ -1,7 +1,17 @@
-const express = require('express')
-const app = express()
-const port = 8080
+const express = require('express');
+const mongoose = require('mongoose');
+const service = require('./route/dataService');
+require("dotenv").config();
 
-app.get('/api', (req, res) => {res.json({"links": ["link1","link2", "link3"]})})
+// Inicializa el servidor express
+const app = express();
+const port = process.env.PORT || 8080
 
-app.listen(port, () => console.log(`listening on port ${port}`))
+// Conexion a base de datos
+mongoose.connect(process.env.MONGODB_URI)
+        .then(() => console.log("connected to mongodb success"))
+        .catch((error) => console.error(error));
+
+app.use('/', service);
+
+app.listen(port, () => console.log(`Server listening on port ${port}`))
