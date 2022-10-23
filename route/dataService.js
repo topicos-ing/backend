@@ -11,17 +11,24 @@ router.get('/getdata', (req, res) => {
 });
 
 // Endpoint para invocar por id y gtin
-router.get('/:id(\d+)/:code(\d+)?*', (req, res) => {
+router.get('/:id(\\d+)/:code(\\d+)', (req, res) => {
     var idp   = req.params.id;
     console.log("Solicitud por el id: " + idp);
     var codigo  = req.params.code;
     console.log("Solicitud por el id: " + codigo);
 
+    // Parametros opcionales se agarran por req.query  
+    var linkType   = req.query.linkType; 
+    if (linkType) {
+        console.log("Viajo en el request el parametro opcional linkType con el valor: " + linkType);
+    }    
+
     var query = { id: idp};
 
     data.find(query, function (err, docs) {
         if (err){
-            console.log(err);
+            // TODO: Controlar mejor esta respuesta
+            console.log(err); 
         }
         else{
             console.log("Resultado de busqueda: " + docs);
