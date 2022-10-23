@@ -11,7 +11,7 @@ router.get('/getdata', (req, res) => {
 });
 
 // Endpoint para invocar por id y gtin
-router.get('/:id/:code', (req, res) => {
+router.get('/:id(\d+)/:code(\d+)?*', (req, res) => {
     var idp   = req.params.id;
     console.log("Solicitud por el id: " + idp);
     var codigo  = req.params.code;
