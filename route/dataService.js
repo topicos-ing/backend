@@ -15,7 +15,9 @@ router.get("/", async (req, res) => {
 // Endpoint para invocar por gtin y params opcionales
 router.get("/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
-  const { linkType, language } = req.query || {};
+  const { linkType } = req.query || {};
+  const language = req.headers["accept-language"]?.split(",")[0];
+
   console.log("Solicitud por el gtin: " + gtin);
   // Se agrega a la query de busqueda el gtin
   let query = { gtin, linkType, language };
