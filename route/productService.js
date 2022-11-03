@@ -40,36 +40,41 @@ router.delete("/products/:id", (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-// Busca por gtin y params opcionales
 router.get("/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
-  const { linkType } = req.query || {}; // Ir agreganto todos los parametros que manejamos
+  const { linkType } = req.query || {};
   const language = req.headers["accept-language"]?.split(",")[0];
 
-  var query = { gtin, linkType, language }
+  console.log("Solicitud por el gtin: " + gtin);
+  // Se agrega a la query de busqueda el gtin
+  let query = { gtin, linkType, language };
 
-  console.log("Query previa a ejecutar busqueda: " + JSON.stringify(query)); 
+  //FIXME var languageResult   = req.headers['accept-language'];
+  // console.log(languageResult)
 
-  productSchema.find(query).then(docs =>
-    {
-      if (docs[0]) {
-        console.log("Resultado de busqueda por todos los params: " + docs);
-        res.status(301).redirect(docs[0].uri); // Redireccion al sitio que tiene cargado el registro
-        return;
-      }else {
-        productSchema.find({ gtin, linkType: "gs1:defaultLink" });
-        console.log("No hubo resutados redireccionando a default");
-        if (docs[0]) {
-          console.log("Resultado de la busqueda por default : " + docs);
-          res.status(301).redirect(docs[0].uri); // Redireccion al sitio que tiene cargado el registro
-          return;
-        }
-        res.status(404).json({ message: "Product Not found" }); 
-      }
-  }).catch(error => {
+  // TODO: Delete. Para pruebas y para ver como queda la query antes del find
+  console.log("Query previa a ejecutar: " + JSON.stringify(query));
+  try {
+    let docs = await productSchema.find(query);
+    if (docs[0]) {
+      // Redireccion al sitio que tiene cargado el registro
+      console.log("Resultado de busqueda find: " + docs);
+      res.status(301).redirect(docs[0].uri);
+      return;
+    }
+    docs = await productSchema.find({ gtin, linkType: "gs1:defaultLink" });
+    console.log("No hubo resutados redireccionando a default");
+    if (docs[0]) {
+      // Redireccion al sitio que tiene cargado el registro
+      console.log("Resultado de busqueda default find: " + docs);
+      res.status(301).redirect(docs[0].uri);
+      return;
+    }
+    res.status(404).json({ message: "Product Not found" });
+  } catch (error) {
     console.error.bind("Error obtenido al ejecutar la busqueda: ", error);
     res.status(400).json({ message: error });
-  }) 
+  }
 });
 
 module.exports = router;
