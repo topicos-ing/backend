@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const service = require('./route/dataService');
+const service = require('./route/productService');
 require("dotenv").config();
 
 // Inicializa el servidor express
@@ -12,6 +12,7 @@ mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopo
         .then(() => console.log("connected to mongodb success"))
         .catch((error) => console.error(error));
 
+app.use(express.json());
 app.use('/', service);
 
 app.listen(port, () => console.log(`Server listening on port ${port}`))
