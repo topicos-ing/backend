@@ -1,25 +1,31 @@
-
-###
+### LISTAR TODOS LOS PRODUCTOS
 GET http://localhost:8080/products HTTP/1.1
 Content-Type: application/json
 
-###
+### AGREGAR PRODUCTO
 POST http://localhost:8080/products HTTP/1.1
 Content-Type: application/json
 
 {
-    "gtin": 1234567888999366,
+    "gtin": 1234567888999377,
     "uri": "http://facebook.com",
     "linkType": "gs1:defaultLink",
     "language" : "manu-test"
 }
 
-###
-PUT  http://localhost:8080/products/1234567888999355 HTTP/1.1
+### ACTUALIZAR PRODUCTO
+PUT  http://localhost:8080/products/1234567888999377 HTTP/1.1
 Content-Type: application/json
 
 {
     "uri": "http://facebook-modif.com",
     "linkType": "gs1:nonDefaultLink"
 }
+
+### OBTENER PRODUCTO MEDIANTE FILTROS
+GET http://localhost:8080/1234567888999377?linkType=gs1:recipeInfo HTTP/1.1
+Content-Type: application/json
+
+### ELIMINAR PRODUCTO MEDIANTE ID DE MONGO
+DELETE   http://localhost:8080/products/636426b2e705d74639ad6e97 HTTP/1.1
 
