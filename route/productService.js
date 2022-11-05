@@ -21,7 +21,6 @@ router.post('/products', (req, res) => {
 
 // Actualiza informacion de un producto por gtin 
 router.put('/products/:gtin/:linkTypeOld', (req, res) => {
-    
     const { gtin , linkTypeOld } = req.params;
     console.log("Actualizando producto con gtin:" + gtin );
     productSchema
@@ -40,41 +39,49 @@ router.delete("/products/:id", (req, res) => {
     .catch((error) => res.json({ message: error }));
 });
 
-router.get("/:gtin(\\d+)", async (req, res) => {
+// Busca por gtin y params opcionales
+router.get("/products/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
-  const { linkType } = req.query || {};
-  const language = req.headers["accept-language"]?.split(",")[0];
+  var { language } =  req.query || {}; 
 
-  console.log("Solicitud por el gtin: " + gtin);
-  // Se agrega a la query de busqueda el gtin
-  let query = { gtin, linkType, language };
+  const languageHeader = req.headers["accept-language"]?.split(",")[0];
+  // Le da prioridad a el lenguaje del navegador
+  if (languageHeader) { language = languageHeader } 
+  
+  var query = { gtin, language, linkType: req.params.linkType || 'gs1:defaultLink' }
 
-  //FIXME var languageResult   = req.headers['accept-language'];
-  // console.log(languageResult)
+  query = Object.assign({}, query, req.query);
+  query = JSON.parse(JSON.stringify(query)); // La transformacion es necesaria para que el find agarre bien la query
 
-  // TODO: Delete. Para pruebas y para ver como queda la query antes del find
-  console.log("Query previa a ejecutar: " + JSON.stringify(query));
-  try {
-    let docs = await productSchema.find(query);
-    if (docs[0]) {
-      // Redireccion al sitio que tiene cargado el registro
-      console.log("Resultado de busqueda find: " + docs);
-      res.status(301).redirect(docs[0].uri);
-      return;
+  console.log("Query previa a ejecutar busqueda: " + JSON.stringify(query));
+
+  productSchema.findOne(query, function(err, result) {
+    if (err) {
+      console.error("Error al buscar el producto con filtros. Message: " + err);
+      return res.status(500).send(err);
+    } else if (result) {
+      console.error("Resultado de busqueda por filtros: " + JSON.stringify(result));
+      return res.redirect(result.uri);
+    } else {
+      console.error("La busqueda por filtros no encontro un match, buscando el producto por defecto");
+      return searchByDefault(gtin, res);
     }
-    docs = await productSchema.find({ gtin, linkType: "gs1:defaultLink" });
-    console.log("No hubo resutados redireccionando a default");
-    if (docs[0]) {
-      // Redireccion al sitio que tiene cargado el registro
-      console.log("Resultado de busqueda default find: " + docs);
-      res.status(301).redirect(docs[0].uri);
-      return;
-    }
-    res.status(404).json({ message: "Product Not found" });
-  } catch (error) {
-    console.error.bind("Error obtenido al ejecutar la busqueda: ", error);
-    res.status(400).json({ message: error });
-  }
+  });
 });
+
+function searchByDefault(gtin, res) {
+  productSchema.findOne({ gtin, linkType: "gs1:defaultLink" }, function(err, result) {
+    if (err) {
+      console.error("Error al buscar el producto por defecto. Message: " + err);
+      res.status(500).send(err);
+    } else if (result) {
+      console.error("Resultado de busqueda por defecto: " + JSON.stringify(result));
+      res.redirect(result.uri);
+    } else {
+      console.error("Las busquedas no encontraron productos con el gtin ingresado");
+      res.status(404).json({ message: "Product Not found" });
+    }
+  });
+}
 
 module.exports = router;

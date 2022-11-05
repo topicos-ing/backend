@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const productSchema = mongoose.Schema({
   gtin: {
-    type: Number,
+    type: String,
     required: true
   },
   uri: {
