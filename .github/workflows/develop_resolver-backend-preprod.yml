@@ -6,7 +6,7 @@ name: Build and deploy Node.js app to Azure Web App - resolver-backend-preprod
 on:
   push:
     branches:
-      - test
+      - develop
   workflow_dispatch:
 
 jobs:
