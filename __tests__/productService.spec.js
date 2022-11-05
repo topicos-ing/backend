@@ -1,5 +1,5 @@
 
-const baseURL = "https://resolver-backend-preprod.azurewebsites.net"
+const baseURL = "https://backend-test-resolver.azurewebsites.net"
 //const app = require('../server.js')
 const request = require('supertest')
 
