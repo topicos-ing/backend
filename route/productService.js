@@ -9,6 +9,14 @@ router.get("/products", (req, res) => {
     .catch(err => res.status(400).json({ message: err}));
 });
 
+// Servicio para listar todos los docuentos
+router.get("/products/:gtin", (req, res) => {
+  const { gtin } = req.params || {};
+  productSchema.find({gtin})
+    .then(data =>  res.status(200).json(data))
+    .catch(err => res.status(400).json({ message: err}));
+});
+
 // Agrega un producto/docuento
 router.post('/products', (req, res) => {
   const product = productSchema(req.body);
