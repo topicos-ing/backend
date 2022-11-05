@@ -61,7 +61,7 @@ router.get("/products/:gtin(\\d+)", async (req, res) => {
       return res.status(500).send(err);
     } else if (result) {
       console.error("Resultado de busqueda por filtros: " + JSON.stringify(result));
-      return res.redirect(result.uri);
+      return res.status(301).redirect(result.uri);
     } else {
       console.error("La busqueda por filtros no encontro un match, buscando el producto por defecto");
       return searchByDefault(gtin, res);
@@ -76,7 +76,7 @@ function searchByDefault(gtin, res) {
       res.status(500).send(err);
     } else if (result) {
       console.error("Resultado de busqueda por defecto: " + JSON.stringify(result));
-      res.redirect(result.uri);
+      res.status(301).redirect(result.uri);
     } else {
       console.error("Las busquedas no encontraron productos con el gtin ingresado");
       res.status(404).json({ message: "Product Not found" });
