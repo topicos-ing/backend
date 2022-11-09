@@ -1,9 +1,5 @@
 const productSchema = require("../models/product");
-const express = require("express");
-const cors = require("cors");
-const router = express.Router();
-
-router.use(cors());
+const router = require("../server");
 
 // Servicio para listar todos los docuentos
 router.get("/products", (req, res) => {
