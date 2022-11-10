@@ -10,7 +10,7 @@ router.get("/products", (req, res) => {
 });
 
 // Servicio para listar todos los docuentos
-router.get("/products/:gtin", (req, res) => {
+router.get("/products/list/:gtin", (req, res) => {
   const { gtin } = req.params || {};
   productSchema
     .find({ gtin })
