@@ -12,7 +12,7 @@ describe("get all products /", () => {
 
 describe("get product with getin 9506000134352", () => {
   test("should respond 200 status code", async () => {
-    const response = await request(app).get("/products/list/9506000134352");
-    expect(response.statusCode).toBe(200);
+    const response = await request(app).get("/products/9506000134352");
+    expect(response.statusCode).toBe(302);
   });
 });
