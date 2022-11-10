@@ -9,13 +9,56 @@ router.get("/products", (req, res) => {
     .catch((err) => res.status(400).json({ message: err }));
 });
 
-// Servicio para listar todos los docuentos
-router.get("/products/list/:gtin", (req, res) => {
-  const { gtin } = req.params || {};
-  productSchema
-    .find({ gtin })
-    .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json({ message: err }));
+router.get("/searchProducts", (req, res) => {
+  let { gtin, language, uri, linkType } = req.query || {};
+
+  let query = {
+    gtin,
+    language,
+    linkType,
+    uri,
+  };
+
+  query = JSON.parse(JSON.stringify(query)); // La transformacion es necesaria para que el find agarre bien la query
+
+  console.log("Query previa a ejecutar busqueda: " + JSON.stringify(query));
+
+  productSchema.find(query, function (err, result) {
+    if (err) {
+      console.error("Error al buscar el producto con filtros. Message: " + err);
+      return res.status(500).send(err);
+    } else if (result) {
+      console.error(
+        "Resultado de busqueda por filtros: " + JSON.stringify(result)
+      );
+      return res.status(200).send(result);
+    } else {
+      console.error(
+        "La busqueda por filtros no encontro un match, buscando el producto por defecto"
+      );
+      return productSchema.find(
+        { gtin, linkType: "gs1:defaultLink" },
+        function (err, result) {
+          if (err) {
+            console.error(
+              "Error al buscar el producto por defecto. Message: " + err
+            );
+            res.status(500).send(err);
+          } else if (result) {
+            console.error(
+              "Resultado de busqueda por defecto: " + JSON.stringify(result)
+            );
+            res.status(200).send(result);
+          } else {
+            console.error(
+              "Las busquedas no encontraron productos con el gtin ingresado"
+            );
+            res.status(404).json({ message: "Product Not found" });
+          }
+        }
+      );
+    }
+  });
 });
 
 // Agrega un producto/docuento
