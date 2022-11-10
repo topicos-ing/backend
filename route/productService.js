@@ -72,11 +72,10 @@ router.post("/products", (req, res) => {
 });
 
 // Actualiza informacion de un producto por gtin
-router.put("/products/:gtin/:linkTypeOld", (req, res) => {
-  const { gtin, linkTypeOld } = req.params;
-  console.log("Actualizando producto con gtin:" + gtin);
+router.put("/products/:id", (req, res) => {
+  const { id } = req.params;
   productSchema
-    .updateOne({ gtin: gtin, linkType: linkTypeOld }, { $set: req.body })
+    .updateOne({ _id: id }, { $set: req.body })
     .then((data) => res.json(data))
     .catch((err) => res.status(400).json({ message: err }));
 });
