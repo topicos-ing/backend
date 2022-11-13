@@ -45,13 +45,12 @@ router.get("/providers", (req, res) => {
     .catch((err) => res.status(400).json({ message: err }));
 });
 
-// #TODO: Eliminar si no aplica más.
-/* router.get("/searchProducts", (req, res) => {
-  let { gtin, language, uri, linkType } = req.query || {};
+router.get("/linksSearch", (req, res) => {
+  let { gtin, acceptLanguage, uri, linkType } = req.query || {};
 
   let query = {
     gtin,
-    language,
+    acceptLanguage,
     linkType,
     uri,
   };
@@ -60,7 +59,7 @@ router.get("/providers", (req, res) => {
 
   console.log("Query previa a ejecutar busqueda: " + JSON.stringify(query));
 
-  productSchema.find(query, function (err, result) {
+  linkSchema.find(query, function (err, result) {
     if (err) {
       console.error("Error al buscar el producto con filtros. Message: " + err);
       return res.status(500).send(err);
@@ -73,7 +72,7 @@ router.get("/providers", (req, res) => {
       console.error(
         "La busqueda por filtros no encontro un match, buscando el producto por defecto"
       );
-      return productSchema.find(
+      return linkSchema.find(
         { gtin, linkType: "gs1:defaultLink" },
         function (err, result) {
           if (err) {
@@ -96,7 +95,7 @@ router.get("/providers", (req, res) => {
       );
     }
   });
-}); */
+});
 
 /*
   Endpoint para agregar un enlace.
