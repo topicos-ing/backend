@@ -31,9 +31,18 @@ describe("List all providers", () => {
   });
 });
 
-/* describe("get product with getin 9506000134352", () => {
-  test("should respond 200 status code", async () => {
+describe("Get link for GTIN 9506000134352", () => {
+  test("Should respond 302 status code", async () => {
     const response = await request(app).get("/links/9506000134352");
     expect(response.statusCode).toBe(302);
   });
-}); */
+});
+
+describe("Get link for GTIN 9506000134352, recipeInfo and spanish language", () => {
+  test("Should respond 302 status code", async () => {
+    const response = await request(app)
+                                .get("/links/9506000134352")
+                                .set("Accept-Language", "es");
+    expect(response.statusCode).toBe(302);
+  });
+});
