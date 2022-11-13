@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const productSchema = mongoose.Schema({
+const linkSchema = mongoose.Schema({
   gtin: {
     type: String,
     required: true
@@ -13,10 +13,10 @@ const productSchema = mongoose.Schema({
     type: String,
     required: false
   },
-  language : {
+  acceptLanguage : {
     type: String,
     require: false
   }
 }, { versionKey: false});
 
-module.exports = mongoose.model('Products', productSchema, 'products');
+module.exports = mongoose.model('Links', linkSchema, 'links');
