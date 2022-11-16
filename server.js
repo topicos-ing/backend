@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+
 require("dotenv").config();
 
 // Inicializa el servidor express
@@ -25,6 +26,7 @@ const runServer = () => {
       .catch((e) => console.error(e));
 
     require("./route/productService");
+    require("./route/authService");
   });
 };
 
