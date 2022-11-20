@@ -4,16 +4,10 @@ const languageSchema = require("../models/language");
 const providerSchema = require("../models/provider");
 
 const router = require("../server");
+const { Aggregate } = require("mongoose");
 
-/*
-  Endpoint para obtener todos los enlaces registrados.
-*/
-router.get("/links", (req, res) => {
-  linkSchema
-    .find()
-    .then((data) => res.status(200).json(data))
-    .catch((err) => res.status(400).json({ message: err }));
-});
+
+
 
 /*
   Endpoint para obtener los tipos de enlace registrados.
@@ -197,5 +191,47 @@ function getDefaultLink(gtin, res) {
     }
   );
 }
+
+/*
+  Endpoint para obtener los enlaces registrados para todos los productos que le
+  corresponden al proveedor especificado.
+*/
+router.get("/links", async (req, res) => {
+  const providerID = Number(req.query.providerID)
+
+  providerSchema.aggregate(
+    [
+      {
+        $match: {
+          _id: providerID
+        }
+      },
+      {
+        $lookup: {
+          from: "links",
+          localField: "products._id",
+          foreignField: "gtin",
+          as: "links"
+        }
+      }
+    ],
+    function (err, result) {
+      if (err) {
+        console.error(
+          "Error al buscar el enlace por defecto. Message: " + err
+        );
+        res.status(500).send(err);
+      }
+      else if (result.length) {
+        console.log(result);
+        res.status(200).json(result[0].links)
+      }
+      else {
+        res.status(500).send(err);
+      }
+    }
+  );
+});
+
 
 module.exports = router;
