@@ -9,12 +9,13 @@ const {
 firebase.initializeApp({apiKey
 });
 
-const authTokenVerify = (req, res, next) => {
-  var admin = require("firebase-admin");
-  var serviceAccount = require("../serviceAccountKey.json");
+var serviceAccount = require("../serviceAccountKey.json");
+const admin =  require("firebase-admin");
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
   });
+
+const authTokenVerify = (req, res, next) => {
   const tokenString = req.headers["authorization"] ? req.headers["authorization"].split(" ") : null;
   if(!tokenString){
     res.send("No header provider");
