@@ -5,18 +5,14 @@ router.post("/signin", async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await auth.authenticate(email, password);
-    res.json(user);
+    const userTokenId = await user.user.getIdToken();
+    const query ={
+      tokenID : userTokenId
+    };
+
+    res.end(JSON.stringify(query));
   } catch (err) {
     res.status(401).json({ error: err.message });
   }
 });
 
-router.post("/signup", async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await auth.addUser(email, password);
-    res.status(201).json(user);
-  } catch (err) {
-    res.status(401).json({ error: err.message });
-  }
-});

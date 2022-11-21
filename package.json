@@ -20,12 +20,14 @@
   },
   "homepage": "https://github.com/topicos-ing/backend#readme",
   "dependencies": {
+    "@codehelios/verify-tokenid": "^0.3.1",
     "@firebase/app": "^0.8.4",
     "@firebase/auth": "^0.20.11",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "firebase": "^9.14.0",
+    "firebase-admin": "^11.3.0",
     "mongoose": "^6.6.7"
   },
   "devDependencies": {
