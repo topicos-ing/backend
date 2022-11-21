@@ -9,7 +9,7 @@ const router = require("../server");
 /*
   Endpoint para obtener los tipos de enlace registrados.
 */
-router.get("/linkTypes", auth.authTokenVerify, (req, res) => {
+router.get("/linkTypes", (req, res) => {
   linkTypeSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -36,7 +36,10 @@ router.get("/providers", (req, res) => {
     .catch((err) => res.status(400).json({ message: err }));
 });
 
-router.get("/linksSearch", (req, res) => {
+router.get("/linksSearch", auth.authTokenVerify, (req, res) => {
+  // TODO: Joaco, por favor, obtener el user ID desde el token. 
+  const userId = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+
   let { gtin, acceptLanguage, uri, linkType } = req.query || {};
 
   let query = {
@@ -124,8 +127,9 @@ function getDefaultLink(gtin, res) {
   Endpoint para obtener los enlaces registrados para todos los productos que le
   corresponden al proveedor especificado.
 */
-router.get("/links", async (req, res) => {
-  const providerID = req.query.providerID;
+router.get("/links", auth.authTokenVerify, async (req, res) => {
+  // TODO: Joaco, por favor, obtener el user ID desde el token. 
+  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
 
   providerSchema.aggregate(
     [
@@ -162,7 +166,19 @@ router.get("/links", async (req, res) => {
 /*
   Endpoint para agregar un enlace.
 */
-router.post("/links", async (req, res) => {
+router.post("/links", auth.authTokenVerify, async (req, res) => {
+  // TODO: Joaco, por favor, obtener el user ID desde el token. 
+  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+
+  // Verifica que el GTIN corresponde a un producto que le pertenezca al
+  // proveedor que realiza la solicitud.
+  const productBelongsToProvider = await isGtinOwnedByProvider(req.body.gtin, providerID)
+
+  if (!productBelongsToProvider) {
+    res.status(400).json({ message: "The product GTIN doesn't exist or isn't owned by the current provider." }).send();
+    return;
+  }
+
   // Verifica que el tipo de enlace es válido.
   const isLinkTypeValid = await checkLinkType(req.body.linkType);
   if (!isLinkTypeValid) {
@@ -190,8 +206,22 @@ router.post("/links", async (req, res) => {
 /*
   Endpoint para actualizar un enlace.
 */
-router.put("/links/:id", async (req, res) => {
+router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
+  // TODO: Joaco, por favor, obtener el user ID desde el token. 
+  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+
   const { id } = req.params;
+
+  /*
+    Verifica si el enlace especificado por su ID corresponde o no
+    al proveedor indicado.
+  */
+  const linkBelongsToProvider = await isLinkOwnedByProvider(id, providerID);
+
+  if (!linkBelongsToProvider) {
+    res.status(400).json({ message: "The link wasn't found or doesn't belong to the specified provider." }).send();
+    return;
+  }
 
   // Verifica que el tipo de enlace es válido.
   const isLinkTypeValid = await checkLinkType(req.body.linkType);
@@ -219,10 +249,25 @@ router.put("/links/:id", async (req, res) => {
 /*
   Endpoint para eliminar un enlace.
 */
-router.delete("/links/:id", (req, res) => {
+router.delete("/links/:id", auth.authTokenVerify, async (req, res) => {
+  // TODO: Joaco, por favor, obtener el user ID desde el token. 
+  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+
   const { id } = req.params;
+
+  /*
+    Verifica si el enlace especificado por su ID corresponde o no
+    al proveedor indicado.
+  */
+  const linkBelongsToProvider = await isLinkOwnedByProvider(id, providerID);
+
+  if (!linkBelongsToProvider) {
+    res.status(400).json({ message: "The link wasn't found or doesn't belong to the specified provider." }).send();
+    return;
+  }
+
   linkSchema
-    .remove({ _id: id })
+    .deleteOne({ _id: id })
     .then((data) => res.json(data))
     .catch((error) => res.json({ message: error }));
 });
@@ -241,6 +286,48 @@ async function checkLinkType(linkType) {
 async function checkLanguageOpt(languageOpt) {
   const result = await languageSchema.findById(languageOpt).exec();
   return result !== null;
+}
+
+/*
+  Verifica si el producto especificado por su GTIN corresponde o no
+  al proveedor indicado.
+*/
+async function isGtinOwnedByProvider(gtin, providerId) {
+  const result = await providerSchema.findById(providerId, 'products -_id').exec();
+  const products = result['products']
+
+  const belongsToProvider = products.some( elem => {
+    if (elem['_id'] === gtin) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  return belongsToProvider;
+}
+
+/*
+  Verifica si el enlace especificado por su ID corresponde o no
+  al proveedor indicado.
+*/
+async function isLinkOwnedByProvider(linkId, providerId) {
+  // Verifica que exista un enlace para el ID especificado.
+  const result = await linkSchema.findById(linkId).exec();
+
+  if (result === null) {
+    return false;
+  }
+
+  // Verifica que el GTIN corresponde a un producto que le pertenezca al
+  // proveedor que realiza la solicitud.
+  const productBelongsToProvider = await isGtinOwnedByProvider(result['gtin'], providerId)
+
+  if (productBelongsToProvider) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 module.exports = router;
