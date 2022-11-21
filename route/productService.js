@@ -2,13 +2,15 @@ const linkSchema = require("../models/link");
 const linkTypeSchema = require("../models/linkType");
 const languageSchema = require("../models/language");
 const providerSchema = require("../models/provider");
+const auth = require("../models/auth");
 
 const router = require("../server");
+const firebase = null
 
 /*
   Endpoint para obtener todos los enlaces registrados.
 */
-router.get("/links", (req, res) => {
+router.get("/links", auth.authTokenVerify, (req, res) => {
   linkSchema
     .find()
     .then((data) => res.status(200).json(data))
