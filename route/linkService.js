@@ -2,13 +2,14 @@ const linkSchema = require("../models/link");
 const linkTypeSchema = require("../models/linkType");
 const languageSchema = require("../models/language");
 const providerSchema = require("../models/provider");
+const auth = require("../models/auth");
 
 const router = require("../server");
 
 /*
   Endpoint para obtener los tipos de enlace registrados.
 */
-router.get("/linkTypes", (req, res) => {
+router.get("/linkTypes", auth.authTokenVerify, (req, res) => {
   linkTypeSchema
     .find()
     .then((data) => res.status(200).json(data))
