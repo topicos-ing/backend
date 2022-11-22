@@ -10,7 +10,7 @@ const { async } = require("@firebase/util");
 /*
   Endpoint para obtener los tipos de enlace registrados.
 */
-router.get("/linkTypes",auth.authTokenVerify, (req, res) => {
+router.get("/linkTypes", (req, res) => {
   linkTypeSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -75,12 +75,27 @@ router.get("/linksSearch", auth.authTokenVerify, async (req, res) => {
   });
 });
 
+/*
+  Endpoint para obtener todos los enlaces asociados a un GTIN especificado.
+*/
+router.head("/01/:gtin(\\d+)", async (req, res) => {
+  const { gtin } = req.params || {};
+
+  const results = await linkSchema.find({ gtin: req.params.gtin }).exec();
+
+  if (!results.length) {
+      res.status(404).send();
+      return;
+  } else {
+      res.status(200).setHeader('links', '[' + results.toString().replace(/\r?\n|\r/g, '') + ']').send();
+  }
+});
 
 
 /*
   Endpoint para obtener redirección dado un GTIN y parámetros especificados.
 */
-router.get("/links/:gtin(\\d+)", async (req, res) => {
+router.get("/01/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
   var { acceptLanguage } = req.query || {};
 
@@ -103,7 +118,7 @@ router.get("/links/:gtin(\\d+)", async (req, res) => {
     if (err) {
       return res.status(500).send(err);
     } else if (result) {
-      return res.status(301).redirect(result.uri);
+      return res.redirect(result.uri);
     } else {
       return getDefaultLink(gtin, res);
     }
