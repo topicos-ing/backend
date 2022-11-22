@@ -24,7 +24,7 @@ const runServer = () => {
       .then(() => console.log("connected to mongodb success"))
       .catch((e) => console.error(e));
 
-    require("./route/productService");
+    require("./route/linkService");
     require("./route/authService");
   });
 };
