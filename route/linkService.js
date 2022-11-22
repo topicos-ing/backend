@@ -5,11 +5,12 @@ const providerSchema = require("../models/provider");
 const auth = require("../models/auth");
 
 const router = require("../server");
+const { async } = require("@firebase/util");
 
 /*
   Endpoint para obtener los tipos de enlace registrados.
 */
-router.get("/linkTypes", (req, res) => {
+router.get("/linkTypes",auth.authTokenVerify, (req, res) => {
   linkTypeSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -36,9 +37,10 @@ router.get("/providers", (req, res) => {
     .catch((err) => res.status(400).json({ message: err }));
 });
 
-router.get("/linksSearch", auth.authTokenVerify, (req, res) => {
+router.get("/linksSearch", auth.authTokenVerify, async (req, res) => {
   // TODO: Joaco, por favor, obtener el user ID desde el token. 
-  const userId = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+ 
+  const userId = await auth.getUserUId(req);
 
   let { gtin, acceptLanguage, uri, linkType } = req.query || {};
 
@@ -129,7 +131,7 @@ function getDefaultLink(gtin, res) {
 */
 router.get("/links", auth.authTokenVerify, async (req, res) => {
   // TODO: Joaco, por favor, obtener el user ID desde el token. 
-  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+  const providerID = await auth.getUserUId(req);
 
   providerSchema.aggregate(
     [
@@ -168,7 +170,7 @@ router.get("/links", auth.authTokenVerify, async (req, res) => {
 */
 router.post("/links", auth.authTokenVerify, async (req, res) => {
   // TODO: Joaco, por favor, obtener el user ID desde el token. 
-  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+  const providerID = await auth.getUserUId(req);
 
   // Verifica que el GTIN corresponde a un producto que le pertenezca al
   // proveedor que realiza la solicitud.
@@ -208,7 +210,7 @@ router.post("/links", auth.authTokenVerify, async (req, res) => {
 */
 router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
   // TODO: Joaco, por favor, obtener el user ID desde el token. 
-  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+  const providerID = await auth.getUserUId(req);
 
   const { id } = req.params;
 
@@ -251,7 +253,7 @@ router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
 */
 router.delete("/links/:id", auth.authTokenVerify, async (req, res) => {
   // TODO: Joaco, por favor, obtener el user ID desde el token. 
-  const providerID = "QybLxhTrGOP8j0zJPVv9xlc7R203"
+  const providerID = await auth.getUserUId(req);
 
   const { id } = req.params;
 

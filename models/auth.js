@@ -27,7 +27,7 @@ const authTokenVerify = (req, res, next) => {
     getAuth().
       verifyIdToken(tokenString[1])
       .then((decodedToken) => {
-        const uid = decodedToken.uid;
+        const _uid = decodedToken.uid;
         next()
       })
       .catch((error) => {
@@ -36,6 +36,19 @@ const authTokenVerify = (req, res, next) => {
   }
 
 }
+
+const getUserUId = async (req)=>{
+
+  const tokenString = req.headers["authorization"] ? req.headers["authorization"].split(" ") : null;
+  const { getAuth } = require("firebase-admin/auth");
+   let id = null
+    await getAuth().
+      verifyIdToken(tokenString[1])
+      .then((decodedToken) =>{ id= decodedToken.uid})
+      .catch((err) =>{ throw(err)})
+  return id
+}
+
 const auth = getAuth();
 
 exports.authenticate = (email, password) =>
@@ -44,3 +57,7 @@ exports.authenticate = (email, password) =>
 
 exports.authTokenVerify = (req, res, next) =>
   authTokenVerify(req, res, next);
+
+
+exports.getUserUId = (req) =>
+getUserUId(req)
