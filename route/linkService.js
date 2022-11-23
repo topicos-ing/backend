@@ -37,51 +37,13 @@ router.get("/providers", (req, res) => {
     .catch((err) => res.status(400).json({ message: err }));
 });
 
-router.get("/linksSearch", auth.authTokenVerify, async (req, res) => {
-  // TODO: Joaco, por favor, obtener el user ID desde el token. 
- 
-  const userId = await auth.getUserUId(req);
-
-  let { gtin, acceptLanguage, uri, linkType } = req.query || {};
-
-  let query = {
-    gtin,
-    acceptLanguage,
-    linkType,
-    uri,
-  };
-
-  query = JSON.parse(JSON.stringify(query)); // La transformacion es necesaria para que el find agarre bien la query
-
-  linkSchema.find(query, function (err, result) {
-    if (err) {
-      return res.status(500).send(err);
-    } else if (result) {
-      return res.status(200).send(result);
-    } else {
-      return linkSchema.find(
-        { gtin, linkType: "gs1:defaultLink" },
-        function (err, result) {
-          if (err) {
-            res.status(500).send(err);
-          } else if (result) {
-            res.status(200).send(result);
-          } else {
-            res.status(404).json({ message: "Link not found" });
-          }
-        }
-      );
-    }
-  });
-});
-
 /*
   Endpoint para obtener todos los enlaces asociados a un GTIN especificado.
 */
 router.head("/01/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
 
-  const results = await linkSchema.find({ gtin: req.params.gtin }).exec();
+  const results = await linkSchema.find({ gtin: req.params.gtin }, {_id: 0}).exec();
 
   if (!results.length) {
       res.status(404).send();
@@ -145,9 +107,25 @@ function getDefaultLink(gtin, res) {
   corresponden al proveedor especificado.
 */
 router.get("/links", auth.authTokenVerify, async (req, res) => {
-  // TODO: Joaco, por favor, obtener el user ID desde el token. 
   const providerID = await auth.getUserUId(req);
 
+  let { gtin } = req.query || {};
+
+  let gtinMatch;
+
+  if (gtin) {
+    gtinMatch = {
+      $match: {
+        'gtin': gtin
+      }
+    }
+  } else {
+    gtinMatch = {
+      $match: {
+      }
+    }
+  }
+  
   providerSchema.aggregate(
     [
       {
@@ -162,17 +140,32 @@ router.get("/links", auth.authTokenVerify, async (req, res) => {
           foreignField: "gtin",
           as: "links"
         }
-      }
+      },
+      {
+        $project: {
+          _id: 0,
+          links: 1
+        }
+      },
+      {
+        $unwind: '$links'
+      },
+      {
+        $replaceRoot: {
+          newRoot: "$links"
+        }
+      },
+      gtinMatch
     ],
     function (err, result) {
       if (err) {
         res.status(500).send(err);
       }
       else if (result.length) {
-        res.status(200).json(result[0].links)
+        res.status(200).json(result)
       }
       else {
-        res.status(500).send(err);
+        res.status(404).send("Product not found.");
       }
     }
   );
@@ -184,7 +177,6 @@ router.get("/links", auth.authTokenVerify, async (req, res) => {
   Endpoint para agregar un enlace.
 */
 router.post("/links", auth.authTokenVerify, async (req, res) => {
-  // TODO: Joaco, por favor, obtener el user ID desde el token. 
   const providerID = await auth.getUserUId(req);
 
   // Verifica que el GTIN corresponde a un producto que le pertenezca al
@@ -224,7 +216,6 @@ router.post("/links", auth.authTokenVerify, async (req, res) => {
   Endpoint para actualizar un enlace.
 */
 router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
-  // TODO: Joaco, por favor, obtener el user ID desde el token. 
   const providerID = await auth.getUserUId(req);
 
   const { id } = req.params;
@@ -267,7 +258,6 @@ router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
   Endpoint para eliminar un enlace.
 */
 router.delete("/links/:id", auth.authTokenVerify, async (req, res) => {
-  // TODO: Joaco, por favor, obtener el user ID desde el token. 
   const providerID = await auth.getUserUId(req);
 
   const { id } = req.params;
