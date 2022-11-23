@@ -43,7 +43,7 @@ router.get("/providers", (req, res) => {
 router.head("/01/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
 
-  const results = await linkSchema.find({ gtin: req.params.gtin }).exec();
+  const results = await linkSchema.find({ gtin: req.params.gtin }, {_id: 0}).exec();
 
   if (!results.length) {
       res.status(404).send();
