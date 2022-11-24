@@ -10,7 +10,7 @@ const { async } = require("@firebase/util");
 /*
   Endpoint para obtener los tipos de enlace registrados.
 */
-router.get("/linkTypes", (req, res) => {
+router.get("/linkTypes", auth.authTokenVerify, (req, res) => {
   linkTypeSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -20,7 +20,7 @@ router.get("/linkTypes", (req, res) => {
 /*
   Endpoint para obtener los lenguajes registrados.
 */
-router.get("/languages", (req, res) => {
+router.get("/languages", auth.authTokenVerify, (req, res) => {
   languageSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -30,7 +30,7 @@ router.get("/languages", (req, res) => {
 /*
   Endpoint para obtener los proveedores registrados.
 */
-router.get("/providers", (req, res) => {
+router.get("/providers", auth.authTokenVerify, (req, res) => {
   providerSchema
     .find()
     .then((data) => res.status(200).json(data))
