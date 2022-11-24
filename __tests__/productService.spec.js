@@ -20,7 +20,7 @@ describe("List all languages", () => {
 describe("List all providers", () => {
   test("Should respond 200 status code", async () => {
     const response = await request(app).get("/providers");
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(401);
   });
 });
 

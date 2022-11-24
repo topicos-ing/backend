@@ -10,7 +10,7 @@ const { async } = require("@firebase/util");
 /*
   Endpoint para obtener los tipos de enlace registrados.
 */
-router.get("/linkTypes", auth.authTokenVerify, (req, res) => {
+router.get("/linkTypes", (req, res) => {
   linkTypeSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -20,7 +20,7 @@ router.get("/linkTypes", auth.authTokenVerify, (req, res) => {
 /*
   Endpoint para obtener los lenguajes registrados.
 */
-router.get("/languages", auth.authTokenVerify, (req, res) => {
+router.get("/languages", (req, res) => {
   languageSchema
     .find()
     .then((data) => res.status(200).json(data))
@@ -41,13 +41,11 @@ router.get("/providers", auth.authTokenVerify, (req, res) => {
   Endpoint para obtener todos los enlaces asociados a un GTIN especificado.
 */
 router.head("/01/:gtin(\\d+)", async (req, res) => {
-  const { gtin } = req.params || {};
+  const gtin = req.params.gtin;
 
-  const results = await linkSchema
-    .find({ gtin: req.params.gtin }, { _id: 0 })
-    .exec();
+  const relatedLinks = await getAllRelatedLinks(gtin)
 
-  if (!results.length) {
+  if (!relatedLinks.length) {
     res.status(404).send();
     return;
   } else {
@@ -55,17 +53,41 @@ router.head("/01/:gtin(\\d+)", async (req, res) => {
       .status(200)
       .setHeader(
         "links",
-        "[" + results.toString().replace(/\r?\n|\r/g, "") + "]"
+        "[" + relatedLinks.toString().replace(/\r?\n|\r/g, "") + "]"
       )
       .send();
   }
 });
 
 /*
+  Obtiene todos los enlaces registrados para el producto cuyo GTIN se especifica.
+*/
+async function getAllRelatedLinks(gtin) {
+  const results = await linkSchema
+    .find({ 'gtin': gtin }, { _id: 0 })
+    .exec();
+
+  return results;
+}
+
+/*
   Endpoint para obtener redirección dado un GTIN y parámetros especificados.
 */
 router.get("/01/:gtin(\\d+)", async (req, res) => {
-  const { gtin } = req.params || {};
+  const gtin = req.params.gtin;
+
+  const relatedLinks = await getAllRelatedLinks(gtin)
+
+  if (!relatedLinks.length) {
+    res.status(404).send();
+  } else {
+    res
+      .setHeader(
+        "links",
+        "[" + relatedLinks.toString().replace(/\r?\n|\r/g, "") + "]"
+      );
+  }
+
   var { acceptLanguage } = req.query || {};
 
   const languageHeader = req.headers["accept-language"]?.split(",")[0];
