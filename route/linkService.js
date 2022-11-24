@@ -43,7 +43,7 @@ router.get("/providers", auth.authTokenVerify, (req, res) => {
 router.head("/01/:gtin(\\d+)", async (req, res) => {
   const gtin = req.params.gtin;
 
-  const relatedLinks = await getAllRelatedLinks(gtin)
+  const relatedLinks = await getAllRelatedLinks(gtin);
 
   if (!relatedLinks.length) {
     res.status(404).send();
@@ -63,9 +63,7 @@ router.head("/01/:gtin(\\d+)", async (req, res) => {
   Obtiene todos los enlaces registrados para el producto cuyo GTIN se especifica.
 */
 async function getAllRelatedLinks(gtin) {
-  const results = await linkSchema
-    .find({ 'gtin': gtin }, { _id: 0 })
-    .exec();
+  const results = await linkSchema.find({ gtin: gtin }, { _id: 0 }).exec();
 
   return results;
 }
@@ -76,16 +74,15 @@ async function getAllRelatedLinks(gtin) {
 router.get("/01/:gtin(\\d+)", async (req, res) => {
   const gtin = req.params.gtin;
 
-  const relatedLinks = await getAllRelatedLinks(gtin)
+  const relatedLinks = await getAllRelatedLinks(gtin);
 
   if (!relatedLinks.length) {
     res.status(404).send();
   } else {
-    res
-      .setHeader(
-        "links",
-        "[" + relatedLinks.toString().replace(/\r?\n|\r/g, "") + "]"
-      );
+    res.setHeader(
+      "links",
+      "[" + relatedLinks.toString().replace(/\r?\n|\r/g, "") + "]"
+    );
   }
 
   var { acceptLanguage } = req.query || {};
@@ -137,7 +134,6 @@ function getDefaultLink(gtin, res) {
 */
 router.get("/links", auth.authTokenVerify, async (req, res) => {
   const providerID = await auth.getUserUId(req);
-
   let { gtin } = req.query || {};
 
   let gtinMatch;

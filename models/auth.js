@@ -7,7 +7,7 @@ firebase.initializeApp({
   apiKey,
 });
 
-var serviceAccount = require("../serviceAccountKey.json");
+var serviceAccount = require(process.env.FIREBASE_ROUTE);
 const admin = require("firebase-admin");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
