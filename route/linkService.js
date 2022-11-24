@@ -43,16 +43,23 @@ router.get("/providers", (req, res) => {
 router.head("/01/:gtin(\\d+)", async (req, res) => {
   const { gtin } = req.params || {};
 
-  const results = await linkSchema.find({ gtin: req.params.gtin }, {_id: 0}).exec();
+  const results = await linkSchema
+    .find({ gtin: req.params.gtin }, { _id: 0 })
+    .exec();
 
   if (!results.length) {
-      res.status(404).send();
-      return;
+    res.status(404).send();
+    return;
   } else {
-      res.status(200).setHeader('links', '[' + results.toString().replace(/\r?\n|\r/g, '') + ']').send();
+    res
+      .status(200)
+      .setHeader(
+        "links",
+        "[" + results.toString().replace(/\r?\n|\r/g, "") + "]"
+      )
+      .send();
   }
 });
-
 
 /*
   Endpoint para obtener redirección dado un GTIN y parámetros especificados.
@@ -116,62 +123,57 @@ router.get("/links", auth.authTokenVerify, async (req, res) => {
   if (gtin) {
     gtinMatch = {
       $match: {
-        'gtin': gtin
-      }
-    }
+        gtin: gtin,
+      },
+    };
   } else {
     gtinMatch = {
-      $match: {
-      }
-    }
+      $match: {},
+    };
   }
-  
+
   providerSchema.aggregate(
     [
       {
         $match: {
-          _id: providerID
-        }
+          _id: providerID,
+        },
       },
       {
         $lookup: {
           from: "links",
           localField: "products._id",
           foreignField: "gtin",
-          as: "links"
-        }
+          as: "links",
+        },
       },
       {
         $project: {
           _id: 0,
-          links: 1
-        }
+          links: 1,
+        },
       },
       {
-        $unwind: '$links'
+        $unwind: "$links",
       },
       {
         $replaceRoot: {
-          newRoot: "$links"
-        }
+          newRoot: "$links",
+        },
       },
-      gtinMatch
+      gtinMatch,
     ],
     function (err, result) {
       if (err) {
         res.status(500).send(err);
-      }
-      else if (result.length) {
-        res.status(200).json(result)
-      }
-      else {
+      } else if (result.length) {
+        res.status(200).json(result);
+      } else {
         res.status(404).send("Product not found.");
       }
     }
   );
 });
-
-
 
 /*
   Endpoint para agregar un enlace.
@@ -181,17 +183,29 @@ router.post("/links", auth.authTokenVerify, async (req, res) => {
 
   // Verifica que el GTIN corresponde a un producto que le pertenezca al
   // proveedor que realiza la solicitud.
-  const productBelongsToProvider = await isGtinOwnedByProvider(req.body.gtin, providerID)
+  const productBelongsToProvider = await isGtinOwnedByProvider(
+    req.body.gtin,
+    providerID
+  );
 
   if (!productBelongsToProvider) {
-    res.status(400).json({ message: "The product GTIN doesn't exist or isn't owned by the current provider." }).send();
+    res
+      .status(400)
+      .json({
+        message:
+          "The product GTIN doesn't exist or isn't owned by the current provider.",
+      })
+      .send();
     return;
   }
 
   // Verifica que el tipo de enlace es válido.
   const isLinkTypeValid = await checkLinkType(req.body.linkType);
   if (!isLinkTypeValid) {
-    res.status(400).json({ message: "The specified link type isn't valid." }).send();
+    res
+      .status(400)
+      .json({ message: "The specified link type isn't valid." })
+      .send();
     return;
   }
 
@@ -199,7 +213,10 @@ router.post("/links", auth.authTokenVerify, async (req, res) => {
   if (req.body.acceptLanguage !== undefined) {
     const isLanguageValid = await checkLanguageOpt(req.body.acceptLanguage);
     if (!isLanguageValid) {
-      res.status(400).json({ message: "The specified acceptLanguage isn't valid." }).send();
+      res
+        .status(400)
+        .json({ message: "The specified acceptLanguage isn't valid." })
+        .send();
       return;
     }
   }
@@ -227,14 +244,23 @@ router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
   const linkBelongsToProvider = await isLinkOwnedByProvider(id, providerID);
 
   if (!linkBelongsToProvider) {
-    res.status(400).json({ message: "The link wasn't found or doesn't belong to the specified provider." }).send();
+    res
+      .status(400)
+      .json({
+        message:
+          "The link wasn't found or doesn't belong to the specified provider.",
+      })
+      .send();
     return;
   }
 
   // Verifica que el tipo de enlace es válido.
   const isLinkTypeValid = await checkLinkType(req.body.linkType);
   if (!isLinkTypeValid) {
-    res.status(400).json({ message: "The specified link type isn't valid." }).send();
+    res
+      .status(400)
+      .json({ message: "The specified link type isn't valid." })
+      .send();
     return;
   }
 
@@ -242,7 +268,10 @@ router.put("/links/:id", auth.authTokenVerify, async (req, res) => {
   if (req.body.acceptLanguage !== undefined) {
     const isLanguageValid = await checkLanguageOpt(req.body.acceptLanguage);
     if (!isLanguageValid) {
-      res.status(400).json({ message: "The specified acceptLanguage isn't valid." }).send();
+      res
+        .status(400)
+        .json({ message: "The specified acceptLanguage isn't valid." })
+        .send();
       return;
     }
   }
@@ -269,7 +298,13 @@ router.delete("/links/:id", auth.authTokenVerify, async (req, res) => {
   const linkBelongsToProvider = await isLinkOwnedByProvider(id, providerID);
 
   if (!linkBelongsToProvider) {
-    res.status(400).json({ message: "The link wasn't found or doesn't belong to the specified provider." }).send();
+    res
+      .status(400)
+      .json({
+        message:
+          "The link wasn't found or doesn't belong to the specified provider.",
+      })
+      .send();
     return;
   }
 
@@ -300,11 +335,13 @@ async function checkLanguageOpt(languageOpt) {
   al proveedor indicado.
 */
 async function isGtinOwnedByProvider(gtin, providerId) {
-  const result = await providerSchema.findById(providerId, 'products -_id').exec();
-  const products = result['products']
+  const result = await providerSchema
+    .findById(providerId, "products -_id")
+    .exec();
+  const products = result["products"];
 
-  const belongsToProvider = products.some( elem => {
-    if (elem['_id'] === gtin) {
+  const belongsToProvider = products.some((elem) => {
+    if (elem["_id"] === gtin) {
       return true;
     } else {
       return false;
@@ -328,7 +365,10 @@ async function isLinkOwnedByProvider(linkId, providerId) {
 
   // Verifica que el GTIN corresponde a un producto que le pertenezca al
   // proveedor que realiza la solicitud.
-  const productBelongsToProvider = await isGtinOwnedByProvider(result['gtin'], providerId)
+  const productBelongsToProvider = await isGtinOwnedByProvider(
+    result["gtin"],
+    providerId
+  );
 
   if (productBelongsToProvider) {
     return true;
