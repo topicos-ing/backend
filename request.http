@@ -1,0 +1,50 @@
+### LISTAR TODOS LOS PRODUCTOS
+GET http://localhost:8080/products HTTP/1.1
+Content-Type: application/json
+
+### LISTAR TODOS LOS documentos de un gtin
+GET http://localhost:8080/products/9506000134352 HTTP/1.1
+Content-Type: application/json
+
+### BUSCAR POR GTIN -> Deberia devolver el elemento con linkType=default
+GET http://localhost:8080/products/9506000134352 HTTP/1.1
+Content-Type: application/json
+
+### OBTENER PRODUCTO CON MAS FILTROS
+GET http://localhost:8080/products/123456788899936060?linkType=gs1:manu-test-01 HTTP/1.1
+Content-Type: application/json
+
+### BUSCAR POR TODOS LOS PARAMETROS -> si no se manda el language por header agarra el por parametro
+GET http://localhost:8080/products/9506000134352?linkType=gs1:recipeInfo&language=es HTTP/1.1
+Content-Type: application/json
+
+
+
+
+### AGREGAR PRODUCTO
+POST http://localhost:8080/products HTTP/1.1
+Content-Type: application/json
+
+{
+    "gtin": "1234567888999360699",
+    "uri": "http://youtube.com",
+    "linkType": "gs1:defaultLink",
+    "language" : "manu-test"
+}
+
+### ACTUALIZAR PRODUCTO -> lo hace por gtin y linkType
+PUT  http://localhost:8080/products/1234567888999360699/gs1:defaultLink HTTP/1.1
+Content-Type: application/json
+
+{
+    "uri": "http://facebook-modif.com",
+    "linkType": "gs1:nonDefaultLink"
+}
+
+### ELIMINAR PRODUCTO MEDIANTE ID DE MONGO -> por id de documento
+DELETE http://localhost:8080/products/636603e47ba4c48110caa833 HTTP/1.1
+
+
+
+
+
