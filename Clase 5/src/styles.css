@@ -1,0 +1,51 @@
+body{
+  background-color: rgb(211, 169, 120);
+  margin: 0px;
+}
+.columnas{
+  background-color: #afbfdf;
+  text-align: center;
+  padding-bottom: 1%;
+}
+
+.tarjeta{
+background-color: bisque;
+margin: 1%;
+margin-top: 5px;
+border-style: solid;
+}
+.tarjeta:hover{
+  background-color: white;
+}
+
+
+
+h2{
+font-size: 14px;
+border-width:2px;
+border-style: groove;
+border-color:#0000ff;
+word-break: break-word;
+}
+
+h3{
+  font-size: 12px;
+  word-break: break-word;
+
+}
+p{
+  font-size: 10px; 
+  word-break: break-word;
+}
+
+.columnasB{
+  background-color: #afbfdf;
+  text-align: center;
+  padding-bottom: 1%;
+  padding: 0;
+
+}
+h1{
+  text-align: center;
+  font-size: 16px;
+}

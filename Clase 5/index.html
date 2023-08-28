@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="./src/styles.css" /> 
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+	<script src="./src/index.js"></script>
+	<title>Prueba Clase 3 Trello</title>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+<div>
+	<h1>Board</h1>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div id="col1" class="col-md-2 col-sm-3 columnas">
+			<h2>Backlog</h2>
+			<div class="tarjeta"> 
+				<h3>Ejemplo1</h3>
+				<p> Prueba tarjeta </p>
+			</div>
+		</div>
+		<div id="col2" class="col-md-2 col-sm-3 columnas">
+			<h2>To Do</h2>
+			<div class="tarjeta"> 
+				<h3>Ejemplo2</h3>
+				<p> Prueba tarjeta </p>
+			</div>
+		</div>
+		<div id="col3" class="col-md-3 col-sm-3 columnas">
+			<h2>In Progress</h2>
+			<div class="tarjeta"> 
+				<h3>Ejemplo3</h3>
+				<p> Prueba tarjeta </p>
+			</div>
+		</div>
+		<div id="col4" class="col-md-2 col-sm-3 columnas">
+			<h2>Done</h2>
+			<div class="tarjeta"> 
+				<h3>Ejemplo4</h3>
+				<p> Prueba tarjeta </p>
+			</div>
+		</div>
+		<div id="col5" class="col-md-2 col-sm-3 columnas">
+			<h2>Blocked</h2>
+			<div class="tarjeta"> 
+				<h3>Ejemplo5</h3>
+				<p> Prueba tarjeta </p>
+			</div>
+		</div>
+		<div id="col5" class="col-md-1 col-sm-3 columnasB">
+			<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+	Agregar Tarjeta
+  </button>
+  
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="exampleModalLabel">Nueva Tarjeta</h5>
+		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<div class="input-group input-group-sm mb-3">
+				<span class="input-group-text" id="inputGroup-sizing-sm">Titulo</span>
+				<input id="titulo" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+			  </div>
+			  <div class="input-group input-group-sm mb-3">
+				<span class="input-group-text" id="inputGroup-sizing-sm">Descripcion</span>
+				<input id="descripcion" type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+			  </div>
+
+			  <select id="combobox" class="form-select" aria-label="Seleccion">
+				<option selected value="col1">Backlog</option>
+				<option value="col2">To Do</option>
+				<option value="col3">In Progress</option>
+				<option value="col4">Done</option>
+				<option value="col5">Blocked</option>
+			  </select>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+		  <button type="button" class="btn btn-primary" onclick="funcionAgregar()">Guardar cambios</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+		</div>
+
+		
+	</div>
+</div>
+	
+</body>
+
+</html>
