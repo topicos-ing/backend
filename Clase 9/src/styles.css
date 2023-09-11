@@ -1,0 +1,11 @@
+.Columnas{
+  text-align: center;
+  width: 19.5%;
+  font-weight: bold;
+}
+.hijo{
+  width: 100%;
+  margin-top: 5%;
+  background-color: transparent !important;
+  backdrop-filter: blur(50px) !important;
+}
