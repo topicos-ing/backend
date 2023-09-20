@@ -1,0 +1,7 @@
+<div *ngIf="loading">Loading...</div>
+<div class="grupoCards" style="margin-top: 5%">
+  <app-card class="card" *ngFor="let card of games.results"
+  [descripcion]="card.name"
+  [imagen]="card.background_image">
+  </app-card>
+</div>

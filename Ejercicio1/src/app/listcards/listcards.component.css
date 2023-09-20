@@ -1,0 +1,13 @@
+@media (min-width: 560px) and (max-width: 1024px) {
+
+  .grupoCards{
+    display: flex;
+    flex-direction: flex-row;
+    flex-wrap: wrap;
+  }
+  .card{
+    width:45%;
+    margin: 2%;
+
+  }
+}
