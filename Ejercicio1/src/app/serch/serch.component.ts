@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+
+import { Observable, Subject } from 'rxjs';
+
 
 @Component({
   selector: 'app-serch',
@@ -6,5 +9,13 @@ import { Component } from '@angular/core';
   styleUrls: ['./serch.component.css']
 })
 export class SerchComponent {
+@Output() search = new EventEmitter<string>();
+query: string = '';
 
+buscarGame(){
+
+  this.search.emit(this.query);
 }
+}
+
+

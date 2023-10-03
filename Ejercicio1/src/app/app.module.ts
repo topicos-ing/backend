@@ -11,7 +11,9 @@ import { CardComponent } from './card/card.component';
 import { SerchComponent } from './serch/serch.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ListcardsComponent } from './listcards/listcards.component';
-import { OffcanvasMenuComponent } from './offcanvas-menu/offcanvas-menu.component';
+import { ModalComponent } from './modal/modal.component';
+
+
 
 @NgModule({
   declarations: [
@@ -23,7 +25,7 @@ import { OffcanvasMenuComponent } from './offcanvas-menu/offcanvas-menu.componen
     CardComponent,
     SerchComponent,
     ListcardsComponent,
-    OffcanvasMenuComponent
+    ModalComponent
   ],
   imports: [
     BrowserModule,

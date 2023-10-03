@@ -1,5 +1,11 @@
 <app-header></app-header>
 <app-serch></app-serch>
-<div>
-  <app-listcards></app-listcards>
+<div *ngIf="modalVisible">
+  <app-modal></app-modal>
 </div>
+<div>
+  <app-listcards (mostrarModalEvent)="onMostrarModal()"></app-listcards>
+</div>
+
+
+

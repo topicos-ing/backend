@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./navegation.component.css']
 })
 export class NavegationComponent {
-
+  isCollapsed = false;
 }

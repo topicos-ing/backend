@@ -1,0 +1,7 @@
+.modal {
+position: absolute !important;
+z-index: 100!important;
+background-color: red!important;
+width: 100vw!important;
+height: 100vh!important;
+}

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CardsService } from '../cards.service';
 
 @Component({
@@ -8,6 +8,15 @@ import { CardsService } from '../cards.service';
 })
 export class CardComponent {
   @Input() imagen: string = "";
+
   @Input() descripcion: string = "";
+  @Output() mostrarModalEvent = new EventEmitter<void>();
+
+  mostrarModal() {
+    // Emitir un evento para notificar al componente padre que debe mostrar el modal
+    console.log('Evento emitido desde app-card');
+    this.mostrarModalEvent.emit();
+  }
 
 }
+
