@@ -1,0 +1,38 @@
+.jugador-item{
+background-color: coral;
+margin: 2px 2px;
+}
+
+
+  .card{
+    margin-top: 5px;
+    display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  }
+
+  .jugador-image{
+    width: 100%;
+  }
+
+
+
+
+@media (min-width: 560px) and (max-width: 1024px) {
+
+  .jugador-item{
+    display: flex;
+    flex-direction: flex-row;
+    flex-wrap: wrap;
+    background-color: coral;
+margin: 2px 2px;
+  }
+  .card{
+    width:45%;
+    margin: 2%;
+
+  }
+
+}

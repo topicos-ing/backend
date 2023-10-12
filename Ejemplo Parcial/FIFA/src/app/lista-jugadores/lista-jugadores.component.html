@@ -1,0 +1,12 @@
+<div class="jugadores-list">
+  <div *ngFor="let jugador of jugadores" class="jugador-item">
+    <div class="card">
+    <img [src]="jugador.imagen" alt="{{jugador.nombre}}" class="jugador-image">
+    <h3>Nombre: {{jugador.nombre}}</h3>
+    <p>Posicion: {{jugador.posicion}}</p>
+    <p>imagen: {{jugador.imagen}}</p>
+    <button (click)="mostrarDetalle(jugador.id)">Más Detalle</button>
+  </div>
+  </div>
+
+</div>

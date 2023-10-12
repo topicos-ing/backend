@@ -1,0 +1,52 @@
+
+<div>
+  <div class="input-group input-group-sm mb-3">
+    <label>Nombre Del Jugador </label>
+    <input [(ngModel)]="Nombre" placeholder="Ingrese un valor">
+ </div>
+ <div>
+<label>Posicion </label>
+ <select [(ngModel)]="valorPosicion">
+  <option value="delantero">delantero</option>
+  <option value="central">central</option>
+  <option value="arquero">arquero</option>
+</select>
+</div>
+<label>Imagen </label>
+<select [(ngModel)]="imagenfoto">
+  <option value="1">Imagen1</option>
+  <option value="2">Imagen2</option>
+  <option value="4">Imagen3</option>
+  <option value="5">Imagen4</option>
+  <option value="5">Imagen5</option>
+  <option value="6">Imagen6</option>
+  <option value="7">Imagen7</option>
+  <option value="8">Imagen8</option>
+  <option value="9">Imagen9</option>
+  <option value="10">Imagen10</option>
+  <option value="11">Imagen11</option>
+  <option value="12">Imagen12</option>
+  <option value="13">Imagen13</option>
+  <option value="14">Imagen14</option>
+  <option value="15">Imagen15</option>
+  <option value="16">Imagen16</option>
+  <option value="18">Imagen17</option>
+  <option value="18">Imagen18</option>
+  <option value="19">Imagen19</option>
+  <option value="20">Imagen20</option>
+
+  <option value="21">Imagen21</option>
+
+  <option value="22">Imagen22</option>
+
+  <option value="23">Imagen23</option>
+
+
+
+</select>
+
+    <button  (click)="Agregar()">AGREGAR</button>
+
+  </div>
+
+  <h1 *ngIf="mostrarMensaje" >Plantilla Completa</h1>
